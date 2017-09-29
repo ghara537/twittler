@@ -3,25 +3,148 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" href="main.css">
   </head>
   <body>
+    <header class = topBar>
+      <h1>TWITTLER</h1>
+    </header>
+    <section class = mainFeed>
+      <h2 class=tLTitle>Twit Log</h2>
+      <button class=refreshTweets>What's Twittling?</button>
+      <p class=tweetLog></p>
+    </section>
+    <aside>
+      <h3 class=following>Following:</h3>
+    </aside>
     <script>
+      
+      //Step 0: firgure out how to print timesstamp of the created tweet
+
+      //Step 1:  Create a button to show all new tweets, needs to be a function of the
+      //same stuff below
+
+      //Step 1 Extra: create a visible alert to show new tweets are available
+
+      //Step 2:  Need to display user names following
+      //Step 2b: Need to display the history of tweets from that user
+
+      //Step 3: design the interface and webpage
+      //primary colors to be black and red, hipster american apparel feel
+      //Home Button - brings to hompage with all tweets
+      //I want title block on top with twittler small icon or something
+      //
+      //on the left side, has a list of who you follow
+      //all of those names are clickable
+      //names are all searchable in a small typing block
+      //text of the names should be highlighted
+      //
+      //Show older tweets???
+
+      //EXTRA - figure out how to make te name one button while the tweet is another click to blow up just the single tweey
 
       $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
-
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
+        var $body = $('body').find('.tweetLog');
+        var $aside = $('aside');
+        
+        var displayFollowing = function() {
+          var keys = Object.keys(streams.users);
+          for(var index = 0; index < keys.length; index++) {
+            var followee = keys[index];
+            var $followee = $('<div class=' + followee + '></div>');
+            $followee.addClass('followee');
+            $followee.text('@' + followee);
+            $followee.appendTo($aside);
+            
+          }
         }
+        
+
+        var displayAllTweets = function () {
+
+          $body.html('');
+          var index = streams.home.length - 1;
+          for(index; index > streams.home.length-10; index--) {
+            
+            var $flexBox = ('<div class=newFlexBox></div>');
+            $body.append($flexBox);
+
+            var tweet = streams.home[index];
+            var $tweeter = $('<span class=' + tweet.user + '></span>');
+            $tweeter.addClass('tweeter');
+            $tweeter.text('@' + tweet.user + ': ');
+            $tweeter.appendTo('.newFlexBox');
+
+            var $tweet = $('<span></span>');
+            $tweet.addClass('tweet');
+            $tweet.text(tweet.message + " \n" + tweet.created_at );
+            $tweet.appendTo('.newFlexBox');
+
+            $('.newFlexBox').addClass('oldFlexBox');
+            $('.oldFlexBox').removeClass('newFlexBox');
+          }
+
+          $('.tLTitle').text('Twit Log');
+        }
+        
+        var displayUserTweets  = function (userName) {
+          
+          var bank = streams.users[userName];
+          var index = (bank.length) - 1;
+          for(index; index > bank.length - 11; index--){
+
+            var $flexBox = ('<div class=newFlexBox></div>');
+            $body.append($flexBox);
+            
+            var tweet = streams.users[userName][index];
+            var $tweeter = $('<span class=' + tweet.user + '></span>');
+            $tweeter.addClass('tweeter');
+            $tweeter.text('@' + tweet.user + ': ');
+            $tweeter.appendTo('.newFlexBox');
+
+            var $tweet = $('<span></span>');
+            $tweet.addClass('tweet');
+            $tweet.text(tweet.message + " \n" + tweet.created_at );
+            $tweet.appendTo('.newFlexBox');
+
+            $('.newFlexBox').addClass('oldFlexBox');
+            $('.oldFlexBox').removeClass('newFlexBox');
+            
+          }     
+          $('.tLTitle').text('@' + userName +  "'s Twits");
+        }
+        
+
+        $('button').on('click', function(){
+          displayAllTweets();
+        });
+        
+
+        //Why does $('div').on   not work but this function does?
+        //also when I create using  h2 or my h1, it works 
+        //$('body').on('click', 'div', function() //causes a double click of the function?
+        //HOW TO FIND A DIV WITHIN A DIV AS A CLICK ITEM
+        $('p').on('click', 'div', function() {
+          //clear the body, but keep the titles and buttons
+          $body.html('');
+          var userNameElement = $(this).closest('div').find('.tweeter').removeClass('tweeter');
+          var userName = userNameElement.attr('class')
+          displayUserTweets(userName);  //contains all of the tweets
+        });
+
+        $('aside').on('click', 'div', function () {
+          $body.html('');
+          var userNameElement = $(this).closest('div').removeClass('followee');
+          var userName = userNameElement.attr('class') //IS THERE A BETTER WAY TO GET ONE OF THE CLASSES
+          userNameElement.addClass('followee'); //fix the class
+          displayUserTweets(userName);
+        });
+
+        displayFollowing();
 
       });
 
     </script>
+
   </body>
 </html>
