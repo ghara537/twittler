@@ -91,15 +91,15 @@
           
           var bank = streams.users[userName];
           var index = (bank.length) - 1;
-          for(index; index > bank.length - 11; index--){
+          for(index; (index > bank.length - 11) && (index > 0); index--){
 
             var $flexBox = ('<div class=newFlexBox></div>');
             $body.append($flexBox);
             
             var tweet = streams.users[userName][index];
-            var $tweeter = $('<span class=' + tweet.user + '></span>');
+            var $tweeter = $('<span class=' + userName + '></span>');
             $tweeter.addClass('tweeter');
-            $tweeter.text('@' + tweet.user + ': ');
+            $tweeter.text('@' + userName + ': ');
             $tweeter.appendTo('.newFlexBox');
 
             var $tweet = $('<span></span>');
